@@ -1,0 +1,106 @@
+android 自定义View:
+
+
+       1.继承View 有四个构造函数：
+
+       		View(Context context)  //Context 构造时使用
+       		View(Context context, @Nullable AttributeSet attrs) //xml 中使用
+       		View(Context context, @Nullable AttributeSet attrs, int defStyleAttr) //第二个构造函数调用
+       		View(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes)   //第三个构造函数调用在21时使用
+
+
+       		定义元素属性时可以用到的地方：
+       				1.xml
+       				2.style
+       				3.theme
+       				4.参数defstyleAttr
+       				5.defStyleRes
+
+       			上述说白了就是只定义在xml 与 style 中，因为 theme,defstyleAttr,defStyleRes 都是在style 中定义的
+
+       		在xml 中首先需要声明属性name,格式如下：
+
+       		新建 attrs.xml：
+       		    <resources>
+       		    		<declare-styleable name="自定义一个名称一般使用自定义类名">
+       		    			<attr name="attr1" format="string"/>
+       		    			<attr name="attr2" format="string"/>
+       		    		</declare-styleable>
+       		    		<attr name="outsideA" format="reference"/>
+       		    </resources>
+       		  声明在attrs中所有的属性就可以在自定义view中使用了，上面声明属性中有个不同，一个在declare-styleable中一个在外面，两个的区
+       		  别是：在outside属性不会再R.styleable的内部类中声称对应的变量，且在declare-styleable中的生成的内部类styleable的变量是类名_属性的形式存在的。比如 cutomize_attr1
+
+       		  上面的基础打完后就可以在style中进行属性的赋值操作，如下：
+       		  	在style中进行操作：
+
+       		  		 <style name="AppThemeLocal" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme" parent="AppThemeLocal">
+        <item name="attr_one">attr_1_from theme</item>
+        <item name="attr_two">attr_2_from theme</item>
+        <item name="attr_three">attr_3_from theme</item>
+        <item name="attr_four">attr_4_from_theme</item>
+    </style>
+
+    <style name="CustomizeStyleInTheme">
+        <item name="attr_one">attr_1_from_reference</item>
+        <item name="attr_two">attr_2_from_reference</item>
+        <item name="attr_three">attr_3_from reference</item>
+    </style>
+
+    <style name="throughStyle">
+        <item name="attr_one">attr_1_from_style</item>
+        <item name="attr_two">attr_2_from_style</item>
+    </style>
+
+    <style name="DefaultCustomizeStyle">
+        <item name="CustomizeStyle">@style/CustomizeStyleInTheme</item>
+        <item name="attr_one">attr_1_from_default_style</item>
+        <item name="attr_two">attr_2_from_default_style</item>
+        <item name="attr_three">attr_3_from default_style</item>
+    </style>
+
+    	可以看到有好多处地方属性值冲突了，待会我们讲一下优先级。
+
+
+     定义完之后就可以在布局xml 中进行使用了：
+
+     	 <Linearlayout
+     	 	.....
+     	    xmln:my="http://schemas.android.com/apk/res-auto"
+     	    .....
+     	    >
+     	    <com.myself.view
+     	    ...
+     	    my:attr1="test in xml"
+     	    style="@style/throughStyle"
+     	    ....
+     	    />
+     	 </linearlayout>
+
+
+     在xml 中定义完之后我们就可以在自定义view 中进行获取设定的值了，如下：
+
+     	public CustomTextView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        TypedArray a = context.obtainStyledAttributes(attrs,R.styleable.Customize,defStyle,R.style.DefaultCustomizeStyle);
+        String one = a.getString(R.styleable.Customize_attr_one);
+        String two = a.getString(R.styleable.Customize_attr_two);
+        String three = a.getString(R.styleable.Customize_attr_three);
+        String four = a.getString(R.styleable.Customize_attr_four);
+        Log.i(TAG, "one:" + one);
+        Log.i(TAG, "two:" + two);
+        Log.i(TAG, "three:" + three);
+        Log.i(TAG, "four:" + four);
+        a.recycle();
+    }
+
+
+    最后获得的结论就是：xml>style>Theme中的默认Sytle>默认Style（通过obtainStyledAttributes的第四个参数指定）>在Theme中直接指定属性值
+
