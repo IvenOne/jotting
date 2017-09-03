@@ -1,0 +1,123 @@
+完全为空的情况下：git clone http：git地址
+
+
+在你的电脑上装好git
+大致流程是：
+1、在github上创建项目
+2、使用git clone https://github.com/xxxxxxx/xxxxx.git克隆到本地
+3、编辑项目
+4、git add . （将改动添加到暂存区）
+5、git commit -m "提交说明"
+6、git push origin master 将本地更改推送到远程master分支。
+这样你就完成了向远程仓库的推送。
+
+
+IventekiMacBook-Pro:ivenStudy Iven$ ssh-keygen -t rsa -b 4096 -C "2596859566@qq.com"
+Generating public/private rsa key pair.
+Enter file in which to save the key (/Users/Iven/.ssh/id_rsa): 
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in /Users/Iven/.ssh/id_rsa.
+Your public key has been saved in /Users/Iven/.ssh/id_rsa.pub.
+The key fingerprint is:
+SHA256:EeZlMna/YpuM1eYyYxo6u9FPeVi0FrR5clJ6VMw9Q70 2596859566@qq.com
+The key's randomart image is:
++---[RSA 4096]----+
+|        * + . +=+|
+|       + B o * o=|
+|        o   X + +|
+|         . o X E |
+|        S + B    |
+|       . = @     |
+|      . + % o    |
+|      .o * =     |
+|      ++. .      |
++----[SHA256]-----+
+IventekiMacBook-Pro:ivenStudy Iven$ 
+
+
+加入 id_rsa.pub 中的ssh key
+
+此秘钥的密码是 123456
+
+
+
+git 的其他使用方法：
+
+
+		git clone :
+			
+			 git clone 【-o 本地远程库名称】 <版本库的网址>  默认为origin
+
+			 git clone时，所有本地分支默认与远程仓库的同名分支建立追踪关系，也就是说本地的master自动追踪origin/master分支，当然允许手动建立追踪关系：
+			   git branch --set-upsteam master origin/next (将master追踪origin/next 分支)
+			   如果当前分支与远程分支有追踪关系，那么git pull 可以省略远程分支名，即：
+			   git pull origin master:master 可以简写成 git pull origin
+			   如果当前只有一个远程分支那么连远程主机名 ，即可以写成 git pull
+
+		git remote:
+
+		      git remote -v 显示本地所有的远程库名称
+		      git remote show <本地的远程库名称亦主机名> 查看详细信息
+		      git remote add <本地主机名称> <远程版本库地址>
+		      git remote rm <主机名> 删除一个远程仓库
+		      git remote rename <旧名称> <新名称> 修改本地远程库名称
+
+		
+		git fetch:      
+
+			  一旦远程主机有了更新，需要取回本地，那么就需要使用git fetch 命令了
+
+			  git fetch <主机名> [远程分支名] 如果不写远程分知名那么取回所有分支的更新
+
+		git branch:
+
+			  git branch -r 查看远程分支
+			  git branch -a 查看所有分支
+
+		git checkout:
+
+			git checkout -b newBranch origin/master  在origin/master 的基础上创建一个新的分支
+
+
+		git pull:
+
+		 		取回远程主机某个分支的更新，再与本地的制定分支合并，完整格式如下：
+		 		git pull <远程主机名> <远程分支名>:<本地分支名>
+		 		          如果远程分支与当前分支合并，那么冒号后的部分可以省略
+
+		 		等同信息：
+		 		        git pull origin next:master   等同于  git fetch origin   然后执行 git merge origin/next
+
+		 		git pull -p ：加上参数p 可以在远程删除已经删除的分支后本地进行同步，因为默认情况下本地是不会更新远程已经删除的分支
+
+		 git push:
+
+		 		用于将本地分支的更新，推送到远程主机。它的格式与git pull 的类似：
+		 		git push <远程主机名> <本地分支名>：<远程分支>
+
+		 		如果远程分支名与本地推送的分支名有推送追踪关系，那么可以省略远程分支名，如果远程分支名不存在那么会被新建
+
+		 			git push origin master:master  如果远程master不存在那么会被新建
+
+		 		如果省略本地分支名，则表示删除指定的远程分支，因为相当于推送一个空的分支给远程分支
+		 			git push origin :master  等同于 git push origin --delete master
+
+		 		如果推送当前分支且推送到的远程分支与当前分支有追踪关系，则可以省略本地分支名与远程分支名，即：
+		 				git push origin		
+
+		 		如果当前只有一个远程仓库，那么可以省略远程仓库主机名，即：
+		 				git push
+
+		 		如果有多个主机存在追踪关系，则可以使用-u 参数指定一个默认主机，那么以后可以是用git push 来默认选择了。
+		 				git push -u origin master
+		 				将本地master分支推送到origin 主机，同时指定origin为默认主机
+
+
+		 		不带任何参数的git push ,默认推送当前分支，这叫做simple方式，此外还有一种matching方式，会推送所有有对应的远程分支的本地分支。git2.0之前默认采用matching方法，现在改为默认采用simple方式。如果要修改这个设置，可以采用git config命令。
+		 			git config --global push.default matching 或者 git config --global push.default simple
+
+
+
+
+
