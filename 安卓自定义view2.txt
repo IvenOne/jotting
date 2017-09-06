@@ -1,0 +1,110 @@
+安卓自定义view2:
+
+
+基础知识：
+		1.	屏幕的左上角为坐标原点
+			向右为x轴增大方向
+			向下为y轴增大方向
+
+		2.	view的位置由4个顶点决定top,left,bottom,right(View的位置是相对于父控件而言的)
+
+			Top:子View上边界到父View上边界的距离
+			Left:子View左边界到父View左边界的距离
+			Bottom:子View下边界距离父View上边界的距离
+			Right：子View右边界距离父View左边界的距离
+
+		3. 获取方式：getTop.....
+
+				MotionEvente中get()和getRaw的区别
+					getX（）是相对于所在组件坐标系中的坐标
+					getRawX（）是相对于屏幕默认坐标系的坐标
+
+
+
+
+Measure 过程：
+			
+			预备知识： 1.ViewGroup.LayoutParams(布局参数)
+					  2.MeasureSpecs 类（父视图对子视图的测量要求）
+
+					  1.1 LayoutParams: 具体值；match_parent;wrap_content
+					  2.1 MeasureSpecs= mode(高2位即：31；32位) + size(具体测量大小，30位)
+					  	          mode分为3种：
+					  	          			UNSPECIFIED
+
+					  	          			EXACTLY: 	match_parent 与 具体数值
+
+					  	          			AT_MOST：  wrap_content
+
+
+					2.2： 如何获得MeasureSpecs
+
+						View自身的LayoutParams 
+						        与                   决定了 MesureSpec  -------> View最终的宽/高
+						 父容器的MeasureSpec
+
+						 依据： 源码：getChildMeasureSpec()
+
+
+						 规律： 
+						 		当子view布局参数设置了具体数值的时候，那么无论父容器的mode是什么，子View的mode一定是exactly+设置大小当子view布局参数为match_parent,那么父容器设置的mode是什么，子View的mode就是什么
+						 		当子view布局参数为wrap_content时，那么父容器设置除了unspecified,mode为unspecified外，其余父容器设置的任何mode,子view的mode 始终未AT_MOST
+
+		过程：
+					单一view的measure 过程：
+
+
+					measure-----> onMeasure----->setMeasureDimension----->getDefaultSize----->完成测量
+
+
+
+					viewGroup的measure过程：
+
+					measureChildren----->measureChild----->getChildMeasureSpec----->measure----->onMeasure----->setMeasureDimension
+
+
+Layout过程：
+			作用：确定View的top,left,bottom,right
+
+
+			layout 的过程：
+
+					单一View的layout过程：
+
+						layout----->onlayout（空实现）----->完成计算
+
+					ViewGroup的layout过程
+
+						layout----->onlayout----->遍历子View调用layout与onLayout----->完成计算
+
+
+			一个注意点：
+					getMeasureWidth()/getMeasureHeight()《一》  与 getWidth()/getHeight()  的区别：《二》
+
+						1.赋值时间： 《一》是在measure过程中  《二》是在layout过程中
+
+						2.赋值方式： 《一》setMeasureDimension 《二》是在layout中传递四个参数之后
+
+						3.大小，一般情况下相等
+
+						4.应用场景： 在onlayout中使用 getMeasure方法，其他地方使用getWidth。。方法
+
+Draw 过程：
+			作用：绘制view视图
+
+			draw的过程：
+
+					单一View的draw过程：
+
+					draw---->drawBackground---->onDraw---->dispatchDraw---->onDrawScrollBars
+
+
+					ViewGrouo的draw过程：
+
+
+					draw---->drawBackgrond---->onDraw---->dispatchDraw---->遍历子View调用draw&drawBackground&onDraw&dispatchDraw&onDrawScrollBars---->onDrawScrollBars
+
+
+
+
+
