@@ -1,0 +1,11 @@
+ImageView 中的scaleType 精辟总结：
+
+	一共八种：
+			matrix / fitXy/ fitStart/fitCenter/fitEnd/center/centerCrop/centerinside
+
+
+			1.matrix从左上角开始绘制
+			2.凡是fit开头的都是完整的图像，不会裁剪，但是会缩放
+			3.center按图像原来的大小居中，能显示多少显示多少
+			4.centercrop 是将空间填满，然后能显示多少显示多少
+			5.centerinside 亦是显示全图，但是不会放大
